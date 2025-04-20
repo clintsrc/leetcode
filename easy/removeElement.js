@@ -1,6 +1,6 @@
 /**
  * 27. Remove Element
- * 
+ *
  * Remove all instances of a given value from an array.
  * Updating the values in place.
  * Preserve the order of remaining elements.
@@ -23,3 +23,6 @@ var removeElement = function (nums, val) {
 
   return k; // Return the new length of the array with all val items removed
 };
+
+
+module.exports = removeElement;
