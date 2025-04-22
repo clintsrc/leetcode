@@ -6,6 +6,8 @@
  * Updating the values in place.
  * Preserve the order of remaining elements.
  *
+ * Efficiency time is O(n) because we iterate through the array once.
+ *
  * @param {number[]} nums the array of numbers
  * @param {number} val the number to remove from the array
  * @return {number} the new length of the array
