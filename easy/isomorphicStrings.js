@@ -1,6 +1,7 @@
 /**
  * 205. Isomorphic Strings
- * 
+ *
+ * https://leetcode.com/problems/isomorphic-strings/
  * Given two strings s and t, determine if they are isomorphic.
  * Two strings s and t are isomorphic if the characters in s can be replaced to get t.
  * All occurrences of a character must be replaced with another character while preserving
@@ -50,3 +51,5 @@ var isIsomorphic = function (s, t) {
 
   return true;
 };
+
+module.exports = isIsomorphic;
