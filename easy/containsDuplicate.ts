@@ -11,6 +11,8 @@
  * values.
  *
  * The complexity is O(n), the cost of the for loop
+ * @param {number[]} nums array of numbers
+ * @return {boolean} true if a duplicate was found
  */
 function containsDuplicate(nums: number[]): boolean {
   const setNums = new Set();
