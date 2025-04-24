@@ -15,6 +15,12 @@
  * 0: your guess is equal to the number I picked (i.e. num == pick).
  * Return the number that I picked.
  *
+ * O(log n): binary search that:
+ *  When target is lower it sets the upper limit to one lower than the guess
+ *    to discard the upper half
+ *  When target is higher it sets the lower limit to one higher than the guess
+ *    to discard the lower half
+ *
  * Forward declaration of guess API.
  * @param {number} num   your guess
  * @return  -1 if num is higher than the picked number
@@ -34,13 +40,14 @@ declare function guess(num: number): number;
 // local tests use:
 var guessNumber = function (guess: Function, n: number): number {
 // var guessNumber = function (n: number): number {
-  let high = n;
+  let high = n; // given n is the highest number possible
   let low = 1;
 
   while (low <= high) {
     let mid = low + Math.floor((high - low) / 2);
 
-    const retVal = guess(mid);
+    // binary searches start in the middle, then break up the range, lower/higher
+    const retVal = guess(mid);  // from leetcode api
 
     // found it!
     if(retVal === 0) {
