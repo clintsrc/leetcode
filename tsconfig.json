@@ -11,6 +11,7 @@
   "include": [
     "./easy/**/*",
     "./medium/**/*",
-    "./hard/**/*"
+    "./hard/**/*",
+    "./grokking_algs/**/*"
   ]
 }

@@ -1,4 +1,4 @@
-import { search } from "./binarySearch";
+import search from "./binarySearch";
 
 describe("704. Binary Search", () => {
   it("should return index of target 9 in array [-1,0,3,5,9,12]", () => {

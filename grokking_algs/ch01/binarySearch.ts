@@ -9,20 +9,38 @@
  *
  * You must write an algorithm with O(log n) runtime complexity.
  *
- * @param {number[]} nums
- * @param {number} target
- * @return {number}
+ * O(log n): binary search divides the input in half stepwise
+ *
+ * @param {number[]} nums - array of ordered integers to search
+ * @param {number} target - the number we're looking for
+ * @return {number} - the array index of the match. -1 if not found
  */
 function search(nums: number[], target: number): number {
-  for (let num = 0; num < nums.length; num++) {
-    if (nums[num] === target) {
-      return num;
+  let lowest = 0; // lower bound index
+  let highest = nums.length - 1;  // upper bound index
+
+  // the lowest and highest index values will narrow
+  while (lowest <= highest) {
+    // set the middle element's index
+    let mid = lowest + Math.floor((highest - lowest) / 2);
+    // get it's value
+    let guess = nums[mid];
+
+    // check for a value match
+    if (target === guess) {
+      // found it!
+      return mid;
+    } else if (guess > target) {
+      // target is lower than the middle element, so set the upper bound to one lower
+      highest = mid - 1;
+    } else {
+      // target is higher, set the upper bound to one higher than the middle element
+      lowest = mid + 1;
     }
   }
 
+  // not found
   return -1;
 }
-
-console.log(search([-1,0,3,5,9,12], 9));
 
 export default search;
