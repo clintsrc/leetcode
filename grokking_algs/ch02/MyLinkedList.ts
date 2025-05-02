@@ -27,6 +27,12 @@
  * void deleteAtIndex(int index) Delete the indexth node in the linked list, if the
  *  index is valid.
  *
+ * Efficiency is:
+ * - get(index): O(n)
+ * - addAtHead(val): O(1)
+ * - addAtTail(val): O(n) - could be O(1)?
+ * - addAtIndex(index, val): O(n)
+ * - deleteAtIndex(index): O(n) - could be O(1)?
  */
 
 interface Node {
