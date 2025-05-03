@@ -30,9 +30,9 @@
  * Efficiency is:
  * - get(index): O(n)
  * - addAtHead(val): O(1)
- * - addAtTail(val): O(n) - could be O(1)?
+ * - addAtTail(val): O(1) after implementing a tail pointer
  * - addAtIndex(index, val): O(n)
- * - deleteAtIndex(index): O(n) - could be O(1)?
+ * - deleteAtIndex(index): O(n) - could be O(1) if doubly-linked?
  */
 
 interface Node {
@@ -40,8 +40,9 @@ interface Node {
   next: Node | null;
 }
 class MyLinkedList {
-  private head: Node | null = null; // empty list
-  private size: number = 0; // node (element) count
+  private head: Node | null = null; // start of list
+  private tail: Node | null = null; // end of list (provides directional capabilities)
+  private size: number = 0; // number of list elements ('nodes')
 
   /**
    * Initializes the MyLinkedList object.
@@ -49,7 +50,8 @@ class MyLinkedList {
    * @return void
    */
   constructor() {
-    this.head = null;
+    this.head = null; // empty list
+    this.tail = null; // empty list
     this.size = 0;
   }
 
@@ -62,19 +64,19 @@ class MyLinkedList {
   get(index: number): number {
     if (index < 0 || index > this.size - 1) {
       return -1;
-    } else {
-      // Traverse the nodes to find index, starting from the current head
-      let current: Node = this.head!; // size has been checked
-      let i = 0;
-
-      // traverse up to the wanted index n times
-      while (i < index) {
-        current = current.next!;
-        i++; // move to the next node
-      }
-
-      return current.val;
     }
+
+    // Traverse the nodes to find index, starting from the current head
+    let current: Node = this.head!; // size has been checked
+    let i = 0;
+
+    // traverse up to the wanted index n times
+    while (i < index) {
+      current = current.next!;
+      i++; // move to the next node
+    }
+
+    return current.val;
   }
 
   /**
@@ -93,6 +95,12 @@ class MyLinkedList {
 
     // Update the list's head to point to this new node
     this.head = newNode;
+
+    // The list's tail is the same node
+    if (this.size === 0) {
+      this.tail = newNode;
+    }
+
     this.size++;
   }
 
@@ -104,25 +112,20 @@ class MyLinkedList {
    */
   addAtTail(val: number): void {
     //Use existing logic for an empty list
-    if (this.head === null) {
+    if (this.tail === null) {
       this.addAtHead(val);
     } else {
-      // Traverse the list
-      let current: Node = this.head;
-
-      // Find the last element
-      while (current.next !== null) {
-        current = current.next!;
-      }
-
       // Create the new node
       const newNode: Node = {
         val: val, // input value
-        next: null, // sets it as the last node
+        next: null, // set it as the last node
       };
 
+      // Update the list's current tail to point to the new node
+      this.tail.next = newNode;
       // The last node now points to the new node
-      current.next = newNode;
+      this.tail = newNode;
+
       this.size++;
     }
   }
@@ -141,7 +144,9 @@ class MyLinkedList {
     if (index < 0 || index > this.size) {
       // Out of bounds, not inserted
       return;
-    } else if (index === 0) {
+    }
+
+    if (index === 0) {
       // Prepend
       this.addAtHead(val);
     } else if (index === this.size) {
@@ -166,6 +171,7 @@ class MyLinkedList {
 
       // Insert before new node by pointing to the new node
       current.next = newNode;
+
       this.size++;
     }
   }
@@ -184,26 +190,39 @@ class MyLinkedList {
 
     // Delete the head by adjusting the list's head directly
     if (index === 0) {
-      this.head = this.head!.next;  // the head is now the next
+      this.head = this.head!.next; // the head is now the next
+
+      // If there's only one node, reset the tail also
+      if (this.size === 1) {
+        this.tail = null;
+      }
+
       this.size--;
 
       return;
-    } else {
-      // Middle deletion
-      // Traverse the list
-      let previousNode: Node = this.head!;
-      let i = 0;
-      // Find the element previous to the indexed element, 'index - 1'
-      while (i < index - 1 && previousNode.next !== null) {
-        previousNode = previousNode.next!;
-        i++;
-      }
-      // previousNode.next is the 'index' element
-      // previousNode.next?.next is the following 'index + 1' element
-      // which could be the last element (null)
-      previousNode.next = previousNode.next?.next || null;
-      this.size--;
     }
+
+    // Middle deletion
+    // Traverse the list
+    let previousNode: Node = this.head!;
+    let i = 0;
+
+    // Find the element previous to the indexed element, 'index - 1'
+    while (i < index - 1 && previousNode.next !== null) {
+      previousNode = previousNode.next!;
+      i++;
+    }
+
+    if (previousNode.next === this.tail) {
+      this.tail = previousNode;
+    }
+
+    // previousNode.next is the 'index' element
+    // previousNode.next?.next is the following 'index + 1' element
+    // which could be the last element (null)
+    previousNode.next = previousNode.next?.next || null;
+
+    this.size--;
 
     return;
   }
