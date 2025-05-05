@@ -40,7 +40,8 @@ interface Node {
   next: Node | null;
 }
 
-class MyLinkedList {
+// Doubly linked list
+class MyLinkedList2 {
   private head: Node | null = null; // start of list
   private tail: Node | null = null; // end of list (provides directional capabilities)
   private size: number = 0; // number of list elements ('nodes')
@@ -239,4 +240,4 @@ class MyLinkedList {
  * obj.deleteAtIndex(index)
  */
 
-export default MyLinkedList;
+export default MyLinkedList2;
