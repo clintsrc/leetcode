@@ -42,6 +42,8 @@ interface Node {
 }
 
 // Doubly linked list
+
+// class MyLinkedList {
 class MyDLinkedList {
   private head: Node | null = null; // start of list
   private tail: Node | null = null; // end of list (provides directional capabilities)
@@ -244,6 +246,11 @@ class MyDLinkedList {
 
       nodeToDelete = previousNode.next;
       previousNode.next = nodeToDelete.next; // drop the node link
+
+      if (nodeToDelete.next !== null) {
+        // update the back link
+        nodeToDelete.next.previous = previousNode;
+      }
 
       // If deleting the tail, update tail pointer
       if (nodeToDelete === this.tail) {
