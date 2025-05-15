@@ -12,7 +12,7 @@ test("Leetcode #88 basic case", () => {
 test("nums2 empty, should do nothing", () => {
   let nums1 = [1];
   let m = 1;
-  let nums2 = [];
+  let nums2 = [] as number[];
   let n = 0;
   merge(nums1, m, nums2, n);
   expect(nums1).toEqual([1]);

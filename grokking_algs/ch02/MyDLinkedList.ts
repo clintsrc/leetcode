@@ -37,17 +37,18 @@
 
 interface Node {
   val: number;
-  next: Node | null;
+  previous: Node | null; // 'left' / 'backward' direction
+  next: Node | null; // 'right' / 'forward' direction
 }
 
 // Doubly linked list
-class MyLinkedList2 {
+class MyDLinkedList {
   private head: Node | null = null; // start of list
   private tail: Node | null = null; // end of list (provides directional capabilities)
-  private size: number = 0; // number of list elements ('nodes')
+  private size: number = 0; // number of list elements ('nodes'), 0-indexed
 
   /**
-   * Initializes the MyLinkedList object.
+   * Initialize the MyLinkedList object.
    * @param void
    * @return void
    */
@@ -92,15 +93,20 @@ class MyLinkedList2 {
     // create a new Node with the input value
     const newNode: Node = {
       val: val,
-      next: this.head, // point to the list's current head
+      next: this.head, // The current head becomes the next node
+      previous: null, // No previous node: this will be the new head
     };
 
-    // Update the list's head to point to this new node
-    this.head = newNode;
-
-    // The list's tail is the same node
     if (this.size === 0) {
+      // Empty list
+      // The list's head and tail are the new node
+      this.head = newNode;
       this.tail = newNode;
+    } else {
+      // The current head's previous now points to the new node
+      this.head!.previous = newNode;
+      // The list's head is the new node
+      this.head = newNode;
     }
 
     this.size++;
@@ -113,27 +119,30 @@ class MyLinkedList2 {
    * @return {void}
    */
   addAtTail(val: number): void {
-    //Use existing logic for an empty list
-    if (this.tail === null) {
+    if (this.size === 0) {
+      // Empty list, reuse!
+      // NOTE: size increment is handled in addAtHead for an empty list
       this.addAtHead(val);
     } else {
-      // Create the new node
+      // create a new Node with the input value
       const newNode: Node = {
-        val: val, // input value
-        next: null, // set it as the last node
+        val: val,
+        next: null, // No next node: this will be the new tail
+        previous: this.tail, // The current tail becomes the previous node
       };
 
       // Update the list's current tail to point to the new node
-      this.tail.next = newNode;
+      this.tail!.next = newNode;
       // The last node now points to the new node
       this.tail = newNode;
 
+      // Keep inside the block since addAtHead() increments an empty list
       this.size++;
     }
   }
 
   /**
-   * Add a node of value val before the indexth node in
+   * Add a node of value val before the index-th node in
    * the linked list. If index equals the length of the
    * linked list, the node will be appended to the end of
    * the linked list. If index is greater than the length,
@@ -149,30 +158,53 @@ class MyLinkedList2 {
     }
 
     if (index === 0) {
-      // Prepend
+      // Prepend (DRY!)
       this.addAtHead(val);
     } else if (index === this.size) {
-      // Append
+      // Append (DRY!)
       this.addAtTail(val);
     } else {
-      // Middle insertion
-      // Traverse the list
-      let current: Node = this.head!;
-      let i = 0;
-      // Find the indexed element
-      while (i < index - 1 && current.next !== null) {
-        current = current.next!;
-        i++;
+      // Find the node previous to the index position (the insertion point)
+      // NOTE: would be good to break this out into a helper function
+      let previousNode: Node;
+      const midIdx = Math.floor(this.size / 2);
+
+      if (index <= midIdx) {
+        // Traverse from the head
+        previousNode = this.head!;
+        let i = 0;
+
+        // Find position before index (the insertion point)
+        while (i < index - 1) {
+          previousNode = previousNode.next!;
+          i++;
+        }
+      } else {
+        // Traverse from the tail
+        previousNode = this.tail!;
+        let i = this.size - 1; // list is 0-indexed
+
+        // Find position before index (the insertion point)
+        while (i > index - 1) {
+          previousNode = previousNode.previous!;
+          i--;
+        }
       }
 
       // Create the new node
       const newNode: Node = {
         val: val, // input value
-        next: current.next, // point to the found nodes' next
+        previous: previousNode, // point back to the previousNode
+        next: previousNode.next, // point forward to what was after previousNode
       };
 
-      // Insert before new node by pointing to the new node
-      current.next = newNode;
+      // previousNode now points forward to the newNode
+      previousNode.next = newNode;
+
+      if (newNode.next !== null) {
+        // If there’s a node after the newNode it points back to newNode
+        newNode.next.previous = newNode;
+      }
 
       this.size++;
     }
@@ -185,48 +217,67 @@ class MyLinkedList2 {
    * @return {void}
    */
   deleteAtIndex(index: number): void {
-    if (index < 0 || index > this.size - 1) {
+    if (index < 0 || index >= this.size) {
       // Out of bounds, not deleted
       return;
     }
 
+    let nodeToDelete: Node | null = null;
+
     // Delete the head by adjusting the list's head directly
     if (index === 0) {
-      this.head = this.head!.next; // the head is now the next
+      nodeToDelete = this.head;
+      this.head = this.head!.next; // change to the second node's head
 
-      // If there's only one node, reset the tail also
+      // If there's only one node, reset the tail too
       if (this.size === 1) {
         this.tail = null;
       }
+    } else {
+      // Find the element at the index position before the targeted index
+      const previousNode: Node | null = this.getNode(index - 1);
 
-      this.size--;
+      if (!previousNode || !previousNode.next) {
+        // Node not found
+        return;
+      }
 
-      return;
+      nodeToDelete = previousNode.next;
+      previousNode.next = nodeToDelete.next; // drop the node link
+
+      // If deleting the tail, update tail pointer
+      if (nodeToDelete === this.tail) {
+        this.tail = previousNode;
+      }
     }
-
-    // Middle deletion
-    // Traverse the list
-    let previousNode: Node = this.head!;
-    let i = 0;
-
-    // Find the element previous to the indexed element, 'index - 1'
-    while (i < index - 1 && previousNode.next !== null) {
-      previousNode = previousNode.next!;
-      i++;
-    }
-
-    if (previousNode.next === this.tail) {
-      this.tail = previousNode;
-    }
-
-    // previousNode.next is the 'index' element
-    // previousNode.next?.next is the following 'index + 1' element
-    // which could be the last element (null)
-    previousNode.next = previousNode.next?.next || null;
 
     this.size--;
 
     return;
+  }
+
+  /**
+   * Helper function to locate a node by index
+   * TODO: update to handle bidirectional
+   *
+   * @param index - The zero-based index of the node to retrieve.
+   * @returns The node at the specified index, or null if the
+   *  index is out of bounds.
+   */
+  getNode(index: number): Node | null {
+    let currentNode: Node | null = this.head;
+
+    if (currentNode === null || index < 0 || index >= this.size) {
+      // Out of bounds, not deleted
+      return null;
+    }
+
+    // Traverse the list
+    for (let i = 0; i < index; i++) {
+      currentNode = currentNode!.next;
+    }
+
+    return currentNode;
   }
 }
 
@@ -240,4 +291,4 @@ class MyLinkedList2 {
  * obj.deleteAtIndex(index)
  */
 
-export default MyLinkedList2;
+export default MyDLinkedList;

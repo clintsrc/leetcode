@@ -1,5 +1,5 @@
 import MyLinkedList from './MyLinkedList';
-import MyLinkedList2 from './MyLinkedList2';
+import MyDLinkedList from './MyDLinkedList';
 
 test('Linked list operations', () => {
   const outputs = [];
@@ -19,7 +19,7 @@ test('Linked list operations', () => {
 
 test('Doubly-Linked list operations', () => {
   const outputs = [];
-  const obj = new MyLinkedList2();
+  const obj = new MyDLinkedList();
   outputs.push(undefined);       // Constructor doesn't return anything
   outputs.push(obj.addAtHead(1));  // [1]
   outputs.push(obj.addAtTail(3));  // [1, 3]
