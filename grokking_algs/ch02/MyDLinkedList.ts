@@ -67,21 +67,19 @@ class MyDLinkedList {
    * @return {number}
    */
   get(index: number): number {
-    if (index < 0 || index > this.size - 1) {
+    if (index < 0 || index >= this.size) {
       return -1;
     }
 
-    // Traverse the nodes to find index, starting from the current head
-    let current: Node = this.head!; // size has been checked
-    let i = 0;
+    // Find the node at the specified index
+    const currentNode: Node | null = this.getNode(index);
 
-    // traverse up to the wanted index n times
-    while (i < index) {
-      current = current.next!;
-      i++; // move to the next node
+    if (!currentNode) {
+      // Node not found
+      return -1;
     }
 
-    return current.val;
+    return currentNode.val;
   }
 
   /**
@@ -168,29 +166,11 @@ class MyDLinkedList {
     } else {
       // Find the node previous to the index position (the insertion point)
       // NOTE: would be good to break this out into a helper function
-      let previousNode: Node;
-      const midIdx = Math.floor(this.size / 2);
+      let previousNode: Node | null = this.getNode(index - 1);
 
-      if (index <= midIdx) {
-        // Traverse from the head
-        previousNode = this.head!;
-        let i = 0;
-
-        // Find position before index (the insertion point)
-        while (i < index - 1) {
-          previousNode = previousNode.next!;
-          i++;
-        }
-      } else {
-        // Traverse from the tail
-        previousNode = this.tail!;
-        let i = this.size - 1; // list is 0-indexed
-
-        // Find position before index (the insertion point)
-        while (i > index - 1) {
-          previousNode = previousNode.previous!;
-          i--;
-        }
+      if (previousNode === null) {
+        // This should never happen if the index logic is correct, but just in case
+        return;
       }
 
       // Create the new node
@@ -280,7 +260,7 @@ class MyDLinkedList {
     ) {
       return null;
     }
-    
+
     // Find the node at the index position
     let currentNode: Node;
     const midIdx = Math.floor(this.size / 2);
