@@ -272,18 +272,38 @@ class MyDLinkedList {
    *  index is out of bounds.
    */
   getNode(index: number): Node | null {
-    let currentNode: Node | null = this.head;
-
-    if (currentNode === null || index < 0 || index >= this.size) {
-      // Out of bounds, not deleted
+    if (
+      index < 0 ||
+      index >= this.size ||
+      this.head === null ||
+      this.tail === null
+    ) {
       return null;
     }
+    
+    // Find the node at the index position
+    let currentNode: Node;
+    const midIdx = Math.floor(this.size / 2);
 
-    // Traverse the list
-    for (let i = 0; i < index; i++) {
-      currentNode = currentNode!.next;
+    if (index <= midIdx) {
+      // Traverse from the head
+      currentNode = this.head!;
+      let i = 0;
+
+      while (i < index) {
+        currentNode = currentNode.next!;
+        i++;
+      }
+    } else {
+      // Traverse from the tail
+      currentNode = this.tail!;
+      let i = this.size - 1; // 0-based index
+
+      while (i > index) {
+        currentNode = currentNode.previous!;
+        i--;
+      }
     }
-
     return currentNode;
   }
 }
