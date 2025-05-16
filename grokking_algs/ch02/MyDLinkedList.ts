@@ -27,12 +27,15 @@
  * void deleteAtIndex(int index) Delete the indexth node in the linked list, if the
  *  index is valid.
  *
+ * Doubly linked list uses getNode helper method for bidirectional traversal
+ *
  * Efficiency is:
- * - get(index): O(n)
+ * DLL traversal is O(n) for traversal; worst case is when index is near the middle
+ * - get(index): O(n) – traverses from head or tail
  * - addAtHead(val): O(1)
- * - addAtTail(val): O(1) after implementing a tail pointer
- * - addAtIndex(index, val): O(n)
- * - deleteAtIndex(index): O(n) - could be O(1) if doubly-linked?
+ * - addAtTail(val): O(1) - uses a tail pointer
+ * - addAtIndex(index, val): O(n) – traverses to index for insert
+ * - deleteAtIndex(index): O(n) – traverses to index for deletion
  */
 
 interface Node {
@@ -63,6 +66,7 @@ class MyDLinkedList {
   /**
    * Get the value of the indexth node in the linked list.
    * If the index is invalid, return -1.
+   * Uses getNode helper method for bidirectional traversal
    * @param {number} index
    * @return {number}
    */
@@ -120,7 +124,7 @@ class MyDLinkedList {
    */
   addAtTail(val: number): void {
     if (this.size === 0) {
-      // Empty list, reuse!
+      // Empty list (DRY)
       // NOTE: size increment is handled in addAtHead for an empty list
       this.addAtHead(val);
     } else {
@@ -142,11 +146,12 @@ class MyDLinkedList {
   }
 
   /**
-   * Add a node of value val before the index-th node in
+   * Add a node with input value before the index-th node in
    * the linked list. If index equals the length of the
    * linked list, the node will be appended to the end of
    * the linked list. If index is greater than the length,
    * the node will not be inserted.
+   * Uses getNode helper method for bidirectional traversal
    * @param {number} index
    * @param {number} val
    * @return {void}
@@ -158,18 +163,17 @@ class MyDLinkedList {
     }
 
     if (index === 0) {
-      // Prepend (DRY!)
+      // Prepend (DRY)
       this.addAtHead(val);
     } else if (index === this.size) {
-      // Append (DRY!)
+      // Append (DRY)
       this.addAtTail(val);
     } else {
       // Find the node previous to the index position (the insertion point)
-      // NOTE: would be good to break this out into a helper function
       let previousNode: Node | null = this.getNode(index - 1);
 
       if (previousNode === null) {
-        // This should never happen if the index logic is correct, but just in case
+        // This should never happen
         return;
       }
 
@@ -195,6 +199,7 @@ class MyDLinkedList {
   /**
    * Delete the indexth node in the linked list, if the
    * index is valid.
+   * Uses getNode helper method for bidirectional traversal
    * @param {number} index
    * @return {void}
    */
@@ -244,9 +249,8 @@ class MyDLinkedList {
   }
 
   /**
-   * Helper function to locate a node by index
-   * TODO: update to handle bidirectional
-   *
+   * Helper method to locate a node by index using bidirectional
+   * traversal
    * @param index - The zero-based index of the node to retrieve.
    * @returns The node at the specified index, or null if the
    *  index is out of bounds.
