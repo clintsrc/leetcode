@@ -17,6 +17,12 @@
  * and since 10 = 2 × 5, and there are always more 2s than 5s,
  * we only need to count the number of times 5 is a factor
  * in numbers from 1 to n.
+ * Formula:
+ *  n/5 + n/5^2 + n/5^3 ... n < 5^x  (while the divisor is less than the input)
+ * or:
+ *  while 5^x ≤ n:  # Repeat until divisor exceeds n
+ *      total += floor(n / 5^x)
+ * (ref: https://www.youtube.com/watch?v=qKbeOillbek)
  *
  * @param {number} n - factorial number
  * @return {number} - the number of trailing zeros from the factorial total
